@@ -54,6 +54,18 @@ defmodule PostponeTest do
       assert_received :message
     end
 
+    def sample_function(pid, msg), do: send(pid, msg)
+
+    test "applies a function, in a given module, with given args, after given interval in ms" do
+      Postpone.apply(__MODULE__, :sample_function, [self(), :message], 100)
+
+      refute_received :message
+
+      :timer.sleep(110)
+
+      assert_received :message
+    end
+
     test "can be manually controlled via the Postpone.Mock module" do
       with_timers_mock do
         Postpone.apply(fn -> send(self(), :one) end, 100)

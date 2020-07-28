@@ -7,6 +7,10 @@ defmodule Postpone do
   end
 
   def apply(fun, time) do
-    :timer.apply_after(time, :erlang, :apply, [fun, []])
+    apply(:erlang, :apply, [fun, []], time)
+  end
+
+  def apply(mod, fun, args, time) do
+    :timer.apply_after(time, mod, fun, args)
   end
 end
