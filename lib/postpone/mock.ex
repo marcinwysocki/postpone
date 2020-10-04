@@ -14,8 +14,8 @@ defmodule Postpone.Mock do
   defmacro with_timers_mock(do: block) do
     quote do
       with_mock Postpone,
-        send: fn msg, to, time -> Server.set(time, fn -> send(to, msg) end) end,
-        apply: fn fun, time -> Server.set(time, fun) end do
+        send_after: fn msg, to, time -> Server.set(time, fn -> send(to, msg) end) end,
+        apply_after: fn fun, time -> Server.set(time, fun) end do
         unquote(block)
       end
     end

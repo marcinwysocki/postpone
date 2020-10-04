@@ -4,7 +4,7 @@ defmodule PostponeTest do
 
   describe "send" do
     test "sends a message after given interval in ms" do
-      Postpone.send(:message, self(), 100)
+      Postpone.send_after(:message, self(), 100)
 
       refute_received :message
 
@@ -15,7 +15,7 @@ defmodule PostponeTest do
 
     test "can be manually controlled via the Postpone.Mock module" do
       with_timers_mock do
-        Postpone.send(:one, self(), 100)
+        Postpone.send_after(:one, self(), 100)
 
         refute_received :one
 
@@ -25,7 +25,7 @@ defmodule PostponeTest do
         run_all_timers()
         assert_received :one
 
-        Postpone.send(:two, self(), 100)
+        Postpone.send_after(:two, self(), 100)
 
         refute_received :two
 
@@ -45,7 +45,7 @@ defmodule PostponeTest do
     test "applies a function after given interval in ms" do
       test_process = self()
 
-      Postpone.apply(fn -> send(test_process, :message) end, 100)
+      Postpone.apply_after(fn -> send(test_process, :message) end, 100)
 
       refute_received :message
 
@@ -57,7 +57,7 @@ defmodule PostponeTest do
     def sample_function(pid, msg), do: send(pid, msg)
 
     test "applies a function, in a given module, with given args, after given interval in ms" do
-      Postpone.apply(__MODULE__, :sample_function, [self(), :message], 100)
+      Postpone.apply_after({__MODULE__, :sample_function, [self(), :message]}, 100)
 
       refute_received :message
 
@@ -68,7 +68,7 @@ defmodule PostponeTest do
 
     test "can be manually controlled via the Postpone.Mock module" do
       with_timers_mock do
-        Postpone.apply(fn -> send(self(), :one) end, 100)
+        Postpone.apply_after(fn -> send(self(), :one) end, 100)
 
         refute_received :one
 
@@ -78,7 +78,7 @@ defmodule PostponeTest do
         run_all_timers()
         assert_received :one
 
-        Postpone.apply(fn -> send(self(), :two) end, 100)
+        Postpone.apply_after(fn -> send(self(), :two) end, 100)
 
         refute_received :two
 
