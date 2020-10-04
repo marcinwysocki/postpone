@@ -1,6 +1,6 @@
 # Postpone
 
-**TODO: Add description**
+A set of helpers for testing `timer`-based code, inspired by [`Jest`](https://jestjs.io/docs/en/timer-mocks).
 
 ## Installation
 
