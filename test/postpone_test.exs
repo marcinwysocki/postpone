@@ -39,6 +39,33 @@ defmodule PostponeTest do
         assert_received :two
       end
     end
+
+    test "supports multiple concurrent mock timers " do
+      with_timers_mock do
+        {:ok, ref1} = Postpone.send_after(:one, self(), 100)
+        {:ok, ref2} = Postpone.send_after(:two, self(), 200)
+        {:ok, ref3} = Postpone.send_after(:three, self(), 300)
+
+        refute ref1 == ref2
+        refute ref2 == ref3
+
+        refute_received :one
+        refute_received :two
+        refute_received :three
+
+        advance_timers_by(110)
+        assert_received :one
+        refute_received :two
+        refute_received :three
+
+        advance_timers_by(110)
+        assert_received :two
+        refute_received :three
+
+        advance_timers_by(110)
+        assert_received :three
+      end
+    end
   end
 
   describe "apply" do
